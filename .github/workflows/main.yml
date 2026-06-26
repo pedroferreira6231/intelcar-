@@ -1,0 +1,36 @@
+name: Build Android APK
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Unzip project
+        run: |
+          unzip -o Intelcar_2.7_PROJETO.zip
+          ls -la
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Make Gradle executable
+        run: chmod +x ./gradlew || true
+
+      - name: Build APK
+        run: ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Intelcar-APK
+          path: app/build/outputs/apk/debug/*.apk
